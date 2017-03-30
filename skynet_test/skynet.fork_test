@@ -8,7 +8,7 @@ skynet.start(function()
   --skynet 里面没有独立线程, 独立线程会阻碍skynet 的核心层控制
     print(collectgarbage("count"))
   skynet.fork(function()
-    print("inside",collectgarbage("count"))
+    print("inside",collectgarbage("count"))--如果是独立线程, 不会有lua vm 全局变量, 更不会在原来的lua vm count 值上面继续叠加...
     for i=1,1000000 do
       skynet.sleep(100)
     end
