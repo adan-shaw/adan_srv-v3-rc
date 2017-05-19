@@ -135,3 +135,44 @@ void xlog_fix(void){
   else
     printf("logger module is fixed, now it's good working ...file_path = %s\n",file_path);//修复成功
 }
+//
+//error log错误日志记录
+void xlog_err(char* err_msg){
+  if(xsig == 0){
+    xt = time(NULL);
+    xcount = 0;
+    xsig = 1;
+    //强行执行一次冲刷
+    fflush(fd);
+  }
+  time_t t = time(NULL);//只是原始码--只有数字--一共10位, 月日时分秒, 2位一组
+  struct tm *loc = localtime(&t);//转换成本地时间
+  memset(&xlog_buf,'\0',xlog_buf_len);//格式化缓冲区
+  //char xtmp_buf[32];
+  sprintf(xlog_buf,"%d/%d/%d-_-%d:%d:%d__",loc->tm_year, loc->tm_mon, loc->tm_mday,loc->tm_hour, loc->tm_min, loc->tm_sec);
+  int tmp = 0;
+  sprintf(&xlog_buf,"%s%s",xlog_buf,err_msg);
+  int len = strlen(xlog_buf) + 1;
+  //printf("%s\n",xlog_buf);printf("len = %d\n",len);//for test
+  //tmp = fwrite(xlog_buf,len,xlog_buf_len,fd);//fwrite 按照二进制来写入--遇到数字变整形
+  //tmp = fwrite(xlog_buf,sizeof(char),len,fd);//整形可能是4bit
+  tmp = fprintf(fd,"%s\n",xlog_buf);//fprintf 是纯字符写入, 同样是缓存再写
+  if(tmp != len){
+	printf("xlog_fix start because fprintf error??tmp = %d, len = %d\n",tmp,len);
+	xlog_fix();
+  }
+  else{
+    //超出100w bit 就换文件
+	printf("%s\n",xlog_buf);
+    file_size_cur = file_size_cur + len;
+    if(file_size_cur > file_size_max){
+      printf("xlog_fix start because file_size_cur reset??file_size_cur = %d, file_size_max = %d\n",file_size_cur,file_size_max);
+      xlog_fix();
+    }
+  }
+  //超出20 次写入就冲刷一次,  超过20s 就冲刷一次
+  if(xcount == 20)
+	xsig = 0;
+  if(t - xt > 20)
+	xsig = 0;
+}
