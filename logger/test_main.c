@@ -44,8 +44,10 @@ int main(void){
   xlog(test,10);
   //暴力测试--2W 5S, 性能还可以...
   int start = time();
-  for(;tmp < 20000;tmp++)
+  for(;tmp < 20000;tmp++){
 	xlog(test,10);
+	xlog_err("if you seek amy tonight !!");
+  }
   printf("%d\n",start-time());
   printf("\n19000 times\n");
   xlog_close();
