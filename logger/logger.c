@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+#include <errno.h>
 //
 //日志生成格式: 年月日, 时分秒...
 //参数可能有: 消息名, 用户名, 房间id, 之类 --log_val 结构体
@@ -175,4 +176,30 @@ void xlog_err(char* err_msg){
 	xsig = 0;
   if(t - xt > 20)
 	xsig = 0;
+}
+//
+//生成加密字典
+int dictionary_size = 10001;
+void xlog_dictionary(void){
+  int xfd = fopen("./dictionary.x","a+");
+  if(xfd == -1){
+	printf("cant fopen ./dictionary.x !!errno = %d",errno);
+	return;
+  }
+  char xhead[] = "unsigned int = {";
+  char xbuf[32];
+  unsigned int tmp = get_xrandom();
+  char xend[32];
+  sprintf(&xend,"%d};",tmp);
+  unsigned int xramdom;
+  //执行写入
+  fprintf(xfd,"%s",xhead);
+  for(tmp = 0;tmp < dictionary_size;tmp++){
+	xramdom = get_xrandom();
+	sprintf(&xbuf,"%d,",xramdom);
+	fprintf(xfd,"%s",xbuf);
+  }
+  fprintf(xfd,"%s",xend);
+  fflush(xfd);
+  fclose(xfd);
 }
