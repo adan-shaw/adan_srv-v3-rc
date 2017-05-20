@@ -51,4 +51,22 @@ int main(void){
   printf("%d\n",start-time());
   printf("\n19000 times\n");
   xlog_close();
+  //
+  //字典生成工具测试
+  xlog_dictionary();
+  //
+  //字典随机数测试--百万测试
+  int test_count = 0;
+  int test_err = 0;
+  for(tmp=0;tmp<1000000;tmp++){
+  unsigned int xtmp = get_xrandom();
+  test_count++;
+  if(xtmp < 0){
+    printf("%d\n",xtmp);
+  	test_err++;
+  }
+  }
+  printf("%d test finish,error count = %d\n",test_count,test_err);
+
+
 }
