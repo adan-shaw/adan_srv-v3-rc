@@ -20,8 +20,10 @@
 //
 //
 char file_path[128] = "./log.x";
+char xfile_path[32] = "./log.x";
+
 int full_out_count = 0;//模块坏死次数
-int file_size_max = 1024000;//100W 字节一换
+int file_size_max = 10240000;//1000W 字节一换 =
 int file_size_cur = 0;
 FILE* fd = 0;//需要初始化, 免得经常fopen file
 struct log_val{
@@ -104,7 +106,7 @@ void xlog(struct log_val in_val,int n){
 	xlog_fix();
   }
   else{
-    //超出100w bit 就换文件
+    //超出1000w bit 就换文件
 	printf("%s\n",xlog_buf);
     file_size_cur = file_size_cur + len;
     if(file_size_cur > file_size_max){
@@ -125,8 +127,10 @@ void xlog_fix(void){
   int tmp;
   //尝试修复--重置资源
   printf("awful !!logger module is not working, now we trying to help it back to work !!\n");
+  time_t t = time(NULL);//只是原始码--只有数字--一共10位, 月日时分秒, 2位一组
+  struct tm *loc = localtime(&t);//转换成本地时间
   full_out_count = full_out_count + 2;
-  sprintf(file_path,"%s%d",file_path,full_out_count);//换个文件名, 可能文件太大
+  sprintf(file_path,"%s_%d-%d-%d_%d",xfile_path,loc->tm_year, loc->tm_mon, loc->tm_mday,full_out_count);//换个文件名, 可能文件太大
   if(xlog_init() != 0){
     //坏死
     printf("logger module is dead, where is the manager ?? please take a look !!!important !!!\n");
