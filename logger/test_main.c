@@ -35,6 +35,20 @@ struct data_frame{
   char s_backup[32];		//32						--32
   char buf[BUF_SIZE];		//BUF_SIZE					--384
 };
+// 32 + 32 + 16 刚好就是 80
+struct data_frame2{
+  unsigned int key[8];		//32 = 8*4	-- 加密钥匙		--32
+  unsigned int comm;		//4 -- 命令					--32
+  unsigned int uid;			//4 -- uid
+  unsigned int age;			//4 -- age
+  unsigned int sex;			//4 -- sex
+  unsigned int zip_code;	//4 -- 邮编
+  unsigned int qq_code;		//4 -- qq 号码用整形记住, 到时候再转string
+  unsigned int ts;			//4 -- 校验时所需的时间戳
+  unsigned int u_backup;	//4 -- 备用
+  //
+  char upw[16];				//16						--16
+};
 //
 //钥匙--unsigned int
 struct xkey{
@@ -226,8 +240,90 @@ printf("\n");
 printf("%s",xtest.buf);
 printf("\n");
 
+//***********************************************************************************************************
+struct data_frame2 xtest2;
+xtest2.comm = 12;
+xtest2.uid = 22;
+xtest2.age = 32;
+xtest2.sex = 42;
+xtest2.zip_code = 52;
+xtest2.qq_code = 62;
+xtest2.ts = 72;
+xtest2.u_backup = 82;
 
+sprintf(xtest2.upw,"%s","bbbb");
 
+printf("原文2222222222～～～～～～～first\n");
+//
+//打印原文
+printf("%d",xtest2.comm);
+printf("\n");
+printf("%d",xtest2.uid);
+printf("\n");
+printf("%d",xtest2.age );
+printf("\n");
+printf("%d",xtest2.sex);
+printf("\n");
+printf("%d",xtest2.zip_code);
+printf("\n");
+printf("%d",xtest2.qq_code);
+printf("\n");
+printf("%d",xtest2.ts);
+printf("\n");
+printf("%d",xtest2.u_backup);
+printf("\n");
+//
+printf("%s",xtest2.upw);
+printf("\n");
+//
+encode_all2(&xtest2,&xxkey);
+hide_key(&xtest2,&xxkey);//隐藏钥匙last
+//
+//打印密文
+printf("密文222222222222222～～～～～～～second\n");
+printf("%d",xtest2.comm);
+printf("\n");
+printf("%d",xtest2.uid);
+printf("\n");
+printf("%d",xtest2.age );
+printf("\n");
+printf("%d",xtest2.sex);
+printf("\n");
+printf("%d",xtest2.zip_code);
+printf("\n");
+printf("%d",xtest2.qq_code);
+printf("\n");
+printf("%d",xtest2.ts);
+printf("\n");
+printf("%d",xtest2.u_backup);
+printf("\n");
+//
+printf("%s",xtest2.upw);
+printf("\n");
+//
+restore_key(&xtest2,&xxkey);//还原钥匙frist
+decode_all2(&xtest2,&xxkey);
+//
+//打印结果
+printf("解密文222222222222～～～～～～～last\n");
+printf("%d",xtest2.comm);
+printf("\n");
+printf("%d",xtest2.uid);
+printf("\n");
+printf("%d",xtest2.age );
+printf("\n");
+printf("%d",xtest2.sex);
+printf("\n");
+printf("%d",xtest2.zip_code);
+printf("\n");
+printf("%d",xtest2.qq_code);
+printf("\n");
+printf("%d",xtest2.ts);
+printf("\n");
+printf("%d",xtest2.u_backup);
+printf("\n");
+printf("%s",xtest2.upw);
+printf("\n");
 //1-2s 10W 还可以啊 -- 这种方法不考虑钥匙是否能还原, 先考虑加密和密文是否能够还原, 再想办法解决key 还原问题
 //是设计加密算法的一些基本要素...先考虑能不能还原, 再考虑key 还原与隐藏
 printf("big data test !!\n");
@@ -237,13 +333,26 @@ for(;xxxtmp<100000;xxxtmp++){
 	get_key(&xxkey);
 	encode_uint(&xtest,&xxkey);
 	encode_char(&xtest,&xxkey);
-	hide_key(&xtest,&xxkey);//隐藏钥匙frist
+	hide_key(&xtest,&xxkey);//隐藏钥匙last
+	//
+	encode_all2(&xtest2,&xxkey);
+	hide_key(&xtest2,&xxkey);//隐藏钥匙last
 	//
 	restore_key(&xtest,&xxkey);//还原钥匙frist
 	decode_uint(&xtest,&xxkey);
 	decode_char(&xtest,&xxkey);
+	//
+	restore_key(&xtest2,&xxkey);//还原钥匙frist
+	decode_all2(&xtest2,&xxkey);
 }
 int Xend = time();
 printf("takes time : %d---test count = %d\n",Xend - Xstart,xxxtmp);
+
+
+
+
+
+
+
 
 }
