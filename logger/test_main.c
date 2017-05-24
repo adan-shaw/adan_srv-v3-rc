@@ -48,7 +48,7 @@ struct xkey{
   unsigned int key8;
 };
 int main(void){
-/*
+
   net_cross_comm(5);//测试数据报生成工具
   //测试日志系统
   xlog_init();
@@ -74,10 +74,10 @@ int main(void){
   xlog(test,10);
   //暴力测试--2W 5S, 性能还可以...
   int start = time();
-  //for(;tmp < 20000;tmp++){
+  for(;tmp < 20000;tmp++){
 	xlog(test,10);
 	xlog_err("if you seek amy tonight !!");
-  //}
+  }
   printf("%d\n",start-time());
   printf("\n19000 times\n");
   xlog_close();
@@ -88,19 +88,19 @@ int main(void){
   //字典随机数测试--百万测试
   int test_count = 0;
   int test_err = 0;
-  //for(tmp=0;tmp<1000000;tmp++){
+  for(tmp=0;tmp<1000000;tmp++){
   unsigned int xtmp = get_xrandom();
   test_count++;
   if(xtmp < 0){
     printf("%d\n",xtmp);
   	test_err++;
-  //}
+  }
   }
   printf("%d test finish,error count = %d\n",test_count,test_err);
 
 
 
-  */
+
   //
   //
   //加密测试
