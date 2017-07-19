@@ -1,4 +1,12 @@
-# adan_srv-v3-rc-building
+# adan_srv-v3-rc
+#
+# this project is too old, and you need to use xredis_lib to load redis drive program to start server 
+# this project just a model for adan_srv-v4, it's too old and i need to remake a new project, remake everything !! god hell me 
+# chinese version:
+# 这个项目已经被关闭, 新的项目adan_srv-v4 将会逐个模块连带测试代码放上来, 整合之后仍然是漫长的...
+# 如果你仍然对这个就项目有兴趣, 你可以自己make 一下, redis 驱动我是以库的形式直接包含进来的, 这个redis 库同样被我定义为新的项目: 
+# xredis_lib ... 有兴趣就玩玩吧
+#
 # in adan_srv-v3-rc, we are trying to design a server gateway for skynet freamwork to support cluster ten skynet server...
 # it just a forward server, seems like a router, but it's a special router, we're going to add there function inside to adan_srv-v3-rc
 # 1.encryption data transmission(encryption algorithm by my own)
