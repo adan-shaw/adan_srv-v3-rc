@@ -1,32 +1,28 @@
 # adan_srv-v3-rc
 #
-# this project is too old, and you need to use xredis_lib to load redis drive program to start server 
-# this project just a model for adan_srv-v4, it's too old and i need to remake a new project, remake everything !! god hell me 
-# chinese version:
-# 这个项目已经被关闭, 新的项目adan_srv-v4 将会逐个模块连带测试代码放上来, 整合之后仍然是漫长的...
-# 如果你仍然对这个就项目有兴趣, 你可以自己make 一下, redis 驱动我是以库的形式直接包含进来的, 这个redis 库同样被我定义为新的项目: 
-# xredis_lib ... 有兴趣就玩玩吧
-#
-# in adan_srv-v3-rc, we are trying to design a server gateway for skynet freamwork to support cluster ten skynet server...
-# it just a forward server, seems like a router, but it's a special router, we're going to add there function inside to adan_srv-v3-rc
-# 1.encryption data transmission(encryption algorithm by my own)
-# 2.long keep-live socket communication by TCP/IP procotol
-# 3.client -> gateway -> server or server -> gateway -> client ... one way travel, one socket one buffer, token mode control 
-#
-# now it's design details by chinese:
-# 1.网关不做心跳控制(心跳包交由skynet 自己做, 很多情况下心跳包要附带业务数据, gateway 不适合做), 简单一个socket 长连接, 
-# 传输对数据加密(保障数据安全), 附带校验码(防止网络不稳定的情况下仍然有校验标准), 
-# 不对数据帧长度进行控制(虽然单帧=512b or 8192b=默认socket 缓冲区大小, 但帧大小控制适合在skynet 中进行, 网关越简单越好) 
-# <重点>不做网关令牌(即同一时刻只能让client or server 操作网关), 支持双边操作, 但是当client 提交数据和server 下发数据时,
-# 如何避免冲突? 做个队列是多余的? 因为网关的网卡设备也只会有一个, 然后操作系统本身就有网络任务队列, 所以其实任务是先后有序没错的...
-# 但是如果不做通信令牌, 当网关被冲击的时候可能危及业务机, 如果有令牌, 业务机拿到了令牌, 则client 就失去网关操作权, 所有提交操作都会被
-# 网关拒绝, 攻击自然危及不到业务机, 网关看不到业务机的令牌许可就不会转发数据到业务机上面, 这样虽然是冗余的, 但是面对冲击的时候却是可靠的
-# 
-#
-# 2.关于为什么废弃网关令牌?? client 同时操作提交socket 对gateway 转发不影响?? 只要有两个缓冲区就不影响...
-# socket 自身就有任务队列, 你提交操作不一定立即执行, OS 内部是有排序的, 所以肯定不会乱序...
-# 想办法将socket 默认自带的buf 拿出来用, 这样每个操作都可以少一个cp, 直接将socket 缓冲区拿来用...
-#
-#
-# 3.网关不做日志记录? 做! 但是只对部分错误操作进行记录, 以分析网关是否收到client 冲击, 正确操作不需要太多记录, 因为网关最主要的功能
-# 就是做到高效转发, 过滤冲击, 集成业务机...
+# this project is too old, project has been shutdown...no longer update anymore...
+#################################################################################
+该项目为业余时间设计, 个人小项目, 非抄袭, 代码严谨, 稳定...
+(项目运行需要先安装并启动redis-server...)
+git clone https://github.com/adan-shaw/adan_srv-v3-rc
+epoll 服务器框架已经做到启动占用5%点以下, 满载时: 启用xfce4 的可视化tty 可以跑上60-80%, 关掉xfce4 纯字符跑30-40%, 服务器CPU 占用率随并发量的上升而上升, 连带客户端阻塞IO型在同一台PC 上测试, 实测满载能跑2W-3W/秒的并发量(裸框架-无业务负载-简单收发), 模拟业务负载redis db 操作+sleep(100)=0.1ms, 实测并发量还有1W/S 左右, 服务器有4个IO 线程, 线程分配均匀, 而且避免了线程切换, 正常状态下只有0线程在跑...
+服务器线程设计：*1.监控线程 *2.监听线程 *3.IO 线程池(redis +数据报+统计监控)
+服务器包含模块如下:
+1.数组改造型-栈
+2.数组改造型-队列(批量加锁)
+3.epoll socket 模块(比较简单, 单纯close 触发epoll-del)
+4.socket IO 任务线程池，同时有计数统计模块, 防止喂饱等策略
+5.redis db 互交数据报模块
+6.简单的随机数加密模块--对服务器流出和流入的数据进行加密和解密，还有离线比对数
+7.监控信息统计与截取，用户互交输入与响应设计
+******************************************************
+客户端设计(单线程):
+1.client 用户互交输入与响应设计
+2.循环测试box,自动回显结果,未做结果自动比对.
+3.client监控模块
++++++++++++++++++++++++++++++++++++++++++++++
+实现-测试平台: eclipse cdt + GCC + debian8-64bit + intel-CPU G860+H61+8G1333
+本人负责设计，实现，测试的所有工作
+//这份项目发表时间是：2016-11-26
+#################################################################################
+
